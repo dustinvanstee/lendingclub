@@ -81,7 +81,7 @@ def load_sample_data(CLASS_ENVIRONMENT) :
         nprint("Setting data location to {}".format(location))
         loanstats_csv_files = glob.glob(location + 'LoanStats_securev1_2016Q1*csv.gz')  # 'LoanStats_secure*csv'
     elif(CLASS_ENVIRONMENT == 'acc') :
-        location='/gpfs/gpfs_gl4_16mb/s4s004/vanstee/2019-06-lendingclub-git/rawdata/'
+        location='/gpfs/home/s4s004/vanstee/2019-06-lendingclub-git/rawdata/'
         nprint("Setting data location to {}".format(location))
         loanstats_csv_files = glob.glob(location + 'LoanStats_securev1_*csv.gz')  # 'LoanStats_secure*csv'
     elif(CLASS_ENVIRONMENT == 'wsl-1231') :
