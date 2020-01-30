@@ -161,8 +161,26 @@ def quick_overview_2d(loan_df, cols) :
         xticklabels=corr_df.columns,
         yticklabels=corr_df.columns,vmin=-1.0,vmax=1.0)
 
-def create_loan_default(df) :
+def create_loan_default(df, enhance_df=True) :
     # use a lamba function to encode multiple loan_status entries into a single 1/0 default variable
+    # Add some extra loan defaults if avg_cur_bal > 10% of annual income...just to make it real
+    nprint("Unique values in loan_status")
+    print(df['loan_status'].value_counts())
+    if(enhance_df == True) :
+        df['tmp_ls'] = df["annual_inc"]*0.10 < df["avg_cur_bal"]
+        df['tmp_ls']  = df['tmp_ls'].where(df['tmp_ls'],df["loan_status"])
+        # create a column of random charge/current
+        vals = ['Current', 'Charged Off']
+        df['r'] = np.random.choice(vals, len(df), p=[0.65, 0.35])
+        df['tmp_ls'] = df['tmp_ls'].where(df['tmp_ls'] != True, df['r'])
+
+        df['loan_status'] = df['tmp_ls']
+
+        df = df.drop(['r', 'tmp_ls'], axis=1)
+        print(len(df[df['loan_status'] == "Charged Off"]))
+
+
+
     nprint("Unique values in loan_status")
     print(df['loan_status'].value_counts())
 
@@ -171,7 +189,7 @@ def create_loan_default(df) :
         'Charged Off',
         'Late (31-120 days)',
         'Late (16-30 days)',
-        'Does not meet the credit policy. Status:Charged Off'
+         'Does not meet the credit policy. Status:Charged Off'
     ]).map(lambda x: int(x))
 
     # Now that we converted loan_status, drop it for later predictions using just default column
@@ -180,6 +198,8 @@ def create_loan_default(df) :
 
 
     df = df.drop(['loan_status', 'total_rec_prncp','total_pymnt','total_pymnt_inv'], axis=1)
+
+    
     nprint("Unique values in default")
     print(df['default'].value_counts())
 
